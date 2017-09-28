@@ -1,0 +1,14 @@
+services:
+    
+    blast.resource_registry:
+         class: Blast\Bundle\ResourceBundle\Metadata\MetadataRegistry
+         
+    blast.doctrine.orm.listener.mapped_superclass:
+        class: Blast\Bundle\ResourceBundle\EventListener\ORMMappedSuperClassSubscriber
+        arguments: ['@blast.resource_registry']
+        tags:
+            - { name: doctrine.event_subscriber, priority: 1000}
+            
+    blast.doctrine.orm.naming_strategy.underscored_bundle_name:
+        class: Blast\Bundle\ResourceBundle\ORM\NamingStrategy\ORMUnderscoredBundleNameStrategy
+        arguments: ['@kernel', []]
