@@ -16,13 +16,11 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Blast\Bundle\ResourceBundle\Metadata\Metadata;
 
 /**
- * This is the class that loads and manages your bundle configuration.
- *
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
 class BlastResourceExtension extends Extension
 {
@@ -39,6 +37,11 @@ class BlastResourceExtension extends Extension
         if ( array_key_exists('resources', $config) ) {
             $this->loadResources($config['resources'], $container);
         }
+
+        if ( array_key_exists('underscored_bundle_prefix_strategy', $config) ) {
+            $this->configureUnderscoredBundlePrefixStrategy(
+                    $config['underscored_bundle_prefix_strategy'], $container);
+        }
     }
 
     private function loadResources(array $resources, ContainerBuilder $container)
@@ -52,6 +55,16 @@ class BlastResourceExtension extends Extension
         }
 
         $container->setParameter('blast.resources', $resources);
+    }
+
+    private function configureUnderscoredBundlePrefixStrategy(array $config,
+            ContainerBuilder $container)
+    {
+        $definition = $container->getDefinition('blast.doctrine.orm.naming_strategy.underscored_bundle_prefix');
+        $args = $definition->getArguments();
+        $config['fallback'] = new Reference($config['fallback']);
+        $args[1] = $config;
+        $definition->setArguments($args);
     }
 
 }

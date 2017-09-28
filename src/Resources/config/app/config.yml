@@ -1,6 +1,10 @@
 blast_resource:
     resources:
+    
+    underscored_bundle_prefix_strategy:
+        fallback: doctrine.orm.naming_strategy.underscore
+        filter: ['Sil']
         
 doctrine:
     orm:
-        naming_strategy: blast.doctrine.orm.naming_strategy.underscored_bundle_name
+        naming_strategy: blast.doctrine.orm.naming_strategy.underscored_bundle_prefix

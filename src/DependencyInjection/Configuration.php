@@ -32,7 +32,15 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('blast_resource');
         $rootNode
                 ->children()
-                ->arrayNode('resources')->end()
+                    ->arrayNode('resources')->end()
+                    ->arrayNode('underscored_bundle_prefix_strategy')->children()
+                        ->scalarNode('fallback')
+                            ->defaultValue('doctrine.orm.naming_strategy.underscore')
+                        ->end()
+                        ->arrayNode('filter')
+                            ->prototype('scalar')->end()
+                        ->end()
+                    ->end()
                 ->end()
         ;
         return $treeBuilder;
