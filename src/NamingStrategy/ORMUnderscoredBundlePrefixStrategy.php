@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of the Blast Project package.
  *
@@ -9,7 +8,6 @@
  * For the full copyright and license information, please view the LICENSE.md
  * file that was distributed with this source code.
  */
-
 namespace Blast\Bundle\ResourceBundle\NamingStrategy;
 
 use Doctrine\ORM\Mapping\NamingStrategy;
@@ -42,15 +40,14 @@ class ORMUnderscoredBundlePrefixStrategy implements NamingStrategy
     /**
      * UnderscoredBundleNamePrefix constructor.
      *
-     * @param KernelInterface $kernel
+     * @param array $enabledBundles
      * @param array $options
      */
     public function __construct(array $enabledBundles, array $options = [])
     {
-
         $this->fallbackStrategy = $options['fallback'];
         $this->namingMap = $this->buildNamingMap($enabledBundles,
-                $options['filter']);
+            $options['filter']);
     }
 
     /**
@@ -79,7 +76,7 @@ class ORMUnderscoredBundlePrefixStrategy implements NamingStrategy
      * {@inheritdoc}
      */
     public function embeddedFieldToColumnName($propertyName,
-            $embeddedColumnName, $className = null, $embeddedClassName = null)
+        $embeddedColumnName, $className = null, $embeddedClassName = null)
     {
         return $this->underscore($propertyName) . '_' . $embeddedColumnName;
     }
@@ -104,7 +101,7 @@ class ORMUnderscoredBundlePrefixStrategy implements NamingStrategy
      * {@inheritdoc}
      */
     public function joinTableName($sourceEntity, $targetEntity,
-            $propertyName = null)
+        $propertyName = null)
     {
         $rc = new ReflectionClass($targetEntity);
         return $this->classToTableName($sourceEntity) . '__' . $this->underscore($rc->getShortName());
@@ -116,7 +113,7 @@ class ORMUnderscoredBundlePrefixStrategy implements NamingStrategy
     public function joinKeyColumnName($entityName, $referencedColumnName = null)
     {
         return $this->classToTableName($entityName) . '_' .
-                ($referencedColumnName ?: $this->referenceColumnName());
+            ($referencedColumnName ?: $this->referenceColumnName());
     }
 
     /**
@@ -134,7 +131,7 @@ class ORMUnderscoredBundlePrefixStrategy implements NamingStrategy
                 continue;
             }
             $bundleNamespace = preg_replace("/$bundleName$/", '',
-                    $bundleNamespace);
+                $bundleNamespace);
             $bundleName = preg_replace('/Bundle$/', '', $bundleName);
             $namingMap[$this->underscore($bundleName)] = $bundleNamespace;
         }
@@ -184,5 +181,4 @@ class ORMUnderscoredBundlePrefixStrategy implements NamingStrategy
         }
         return false;
     }
-
 }
