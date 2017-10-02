@@ -14,6 +14,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\InputArgument;
 
 /**
  * Description of ListDoctrineTablesCommand
@@ -27,11 +29,14 @@ class ListDoctrineTablesCommand extends ContainerAwareCommand
     {
         $this
                 ->setName('blast:doctrine:list-tables')
-                ->setDescription('List doctrine tables');
+                ->setDescription('List doctrine tables')
+                ->addArgument('preg_filter', InputArgument::OPTIONAL,
+                        'table name filter used by preg_match', '.*');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $filter = $input->getArgument('preg_filter');
         $command = $this->getApplication()->find('doctrine:schema:create');
         $arguments = array('--dump-sql' => true);
         $cmdInput = new ArrayInput($arguments);
@@ -39,11 +44,38 @@ class ListDoctrineTablesCommand extends ContainerAwareCommand
         $returnCode = $command->run($cmdInput, $cmdOutput);
 
         $content = $cmdOutput->fetch();
-        preg_match_all('#create\s*table\s* (\w+) #i', $content, $matches);
-        $tables = $matches[1];
+        preg_match_all(
+                '#create\s*table\s* (\w+)\s*\((.*)\) #i', $content, $matches);
+        $tableNames = $matches[1];
+        $columns = $matches[2];
+        $tables = [];
+
+        for ( $i = 0; $i < count($columns); $i++ ) {
+            $cols = explode(',', $columns[$i]);
+
+            $cols = array_map(function($c) {
+                return (explode(' ', trim($c)))[0];
+            }, $cols);
+            $tables[$tableNames[$i]] = $cols;
+        }
+
+
+
         asort($tables);
-        foreach ($tables as $table ) {
-            $output->writeln($table);
+
+
+
+        foreach ( $tables as $tableName => $cols ) {
+            if ( !preg_match('/.*' . $filter . '.*/', $tableName) ) {
+                continue;
+            }
+            $table = new Table($output);
+            $table->setHeaders([$tableName]);
+
+            foreach ( $cols as $colName ) {
+                $table->addRow([$colName]);
+            }
+            $table->render();
         }
     }
 
