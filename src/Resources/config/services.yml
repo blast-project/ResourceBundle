@@ -12,3 +12,16 @@ services:
     blast.doctrine.orm.naming_strategy.underscored_bundle_prefix:
         class: Blast\Bundle\ResourceBundle\NamingStrategy\ORMUnderscoredBundlePrefixStrategy
         arguments: ['%kernel.bundles%']
+        
+        
+    
+    
+   # blast.sonata.crud_controller:
+   #     class:  Blast\Bundle\ResourceBundle\Sonata\Controller\CRUDController
+   #     calls:
+   #         - ["setContainer", ['@service_container']]
+            
+     
+   # sonata.admin.helper:
+   #     class:  Blast\Bundle\ResourceBundle\Sonata\Admin\AdminHelper
+   #     arguments: ['@sonata.admin.pool']
