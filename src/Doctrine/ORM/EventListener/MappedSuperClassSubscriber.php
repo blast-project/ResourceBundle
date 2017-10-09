@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Blast\Bundle\ResourceBundle\EventListener;
+namespace Blast\Bundle\ResourceBundle\Doctrine\ORM\EventListener;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Configuration;
@@ -25,7 +25,7 @@ use Blast\Bundle\ResourceBundle\Metadata\MetadataRegistryInterface;
 /**
  * @author Glenn Cavarlé <glenn.cavarle@libre-informatique.fr>
  */
-final class ORMMappedSuperClassSubscriber implements EventSubscriber
+final class MappedSuperClassSubscriber implements EventSubscriber
 {
 
     /**

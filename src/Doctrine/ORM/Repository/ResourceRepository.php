@@ -6,10 +6,11 @@
  * and open the template in the editor.
  */
 
-namespace Blast\Bundle\ResourceBundle\Doctrine\ORM;
+namespace Blast\Bundle\ResourceBundle\Doctrine\ORM\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Blast\Bundle\ResourceBundle\Repository\ResourceRepositoryInterface;
+use InvalidArgumentException;
 
 /**
  * Description of ResourceRepository

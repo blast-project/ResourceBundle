@@ -60,7 +60,7 @@ class BlastResourceExtension extends Extension
     private function configureUnderscoredBundlePrefixStrategy(array $config,
             ContainerBuilder $container)
     {
-        $definition = $container->getDefinition('blast.doctrine.orm.naming_strategy.underscored_bundle_prefix');
+        $definition = $container->getDefinition('blast.resource.doctrine.orm.naming_strategy.underscored_bundle_prefix');
         $args = $definition->getArguments();
         $config['fallback'] = new Reference($config['fallback']);
         $args[1] = $config;

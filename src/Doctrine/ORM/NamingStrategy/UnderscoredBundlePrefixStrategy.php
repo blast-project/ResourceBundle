@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE.md
  * file that was distributed with this source code.
  */
-namespace Blast\Bundle\ResourceBundle\NamingStrategy;
+namespace Blast\Bundle\ResourceBundle\Doctrine\ORM\NamingStrategy;
 
 use Doctrine\ORM\Mapping\NamingStrategy;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
@@ -17,7 +17,7 @@ use ReflectionClass;
 /**
  * @author Glenn Cavarlé <glenn.cavarle@libre-informatique.fr>
  */
-class ORMUnderscoredBundlePrefixStrategy implements NamingStrategy
+class UnderscoredBundlePrefixStrategy implements NamingStrategy
 {
 
     /**

@@ -25,7 +25,7 @@ class RegisterResourcesPass implements CompilerPassInterface
 
         try {
             $resources = $container->getParameter('blast.resources');
-            $registry = $container->findDefinition('blast.resource_registry');
+            $registry = $container->findDefinition('blast.resource.resource_registry');
         } catch ( InvalidArgumentException $exception ) {
             return;
         }
