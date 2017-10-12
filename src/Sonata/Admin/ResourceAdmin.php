@@ -1,11 +1,9 @@
 <?php
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 namespace Blast\Bundle\ResourceBundle\Sonata\Admin;
 
 use Blast\CoreBundle\Admin\CoreAdmin as BlastAdmin;
@@ -24,7 +22,7 @@ class ResourceAdmin extends BlastAdmin
     {
         SonataAdmin::configure();
         $this->getLabelTranslatorStrategy()
-                ->setPrefix($this->getLabel());
+            ->setPrefix($this->getLabel());
     }
 
     /**
@@ -81,5 +79,4 @@ class ResourceAdmin extends BlastAdmin
 
         return $object;
     }
-
 }
