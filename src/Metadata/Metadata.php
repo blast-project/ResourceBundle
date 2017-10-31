@@ -1,21 +1,24 @@
 <?php
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of the Blast Project package.
+ *
+ * Copyright (C) 2015-2017 Libre Informatique
+ *
+ * This file is licenced under the GNU LGPL v3.
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
 
 namespace Blast\Bundle\ResourceBundle\Metadata;
 
 /**
- * Description of Metadata
+ * Description of Metadata.
  *
  * @author glenn
  */
 class Metadata implements MetadataInterface
 {
-
     /**
      * @var string
      */
@@ -29,7 +32,7 @@ class Metadata implements MetadataInterface
     /**
      * @param string $name
      * @param string $applicationName
-     * @param array $parameters
+     * @param array  $parameters
      */
     private function __construct(string $alias, array $parameters)
     {
@@ -39,7 +42,7 @@ class Metadata implements MetadataInterface
 
     /**
      * @param string $alias
-     * @param array $parameters
+     * @param array  $parameters
      *
      * @return self
      */
@@ -58,9 +61,10 @@ class Metadata implements MetadataInterface
      */
     public function getParameter(string $name)
     {
-        if ( !$this->hasParameter($name) ) {
+        if (!$this->hasParameter($name)) {
             throw new \InvalidArgumentException(sprintf('Parameter "%s" is not configured for resource "%s".', $name, $this->getAlias()));
         }
+
         return $this->parameters[$name];
     }
 
@@ -85,9 +89,10 @@ class Metadata implements MetadataInterface
      */
     public function getClass(string $name)
     {
-        if ( !$this->hasClass($name) ) {
+        if (!$this->hasClass($name)) {
             throw new \InvalidArgumentException(sprintf('Class "%s" is not configured for resource "%s".', $name, $this->getAlias()));
         }
+
         return $this->parameters['classes'][$name];
     }
 
@@ -98,5 +103,4 @@ class Metadata implements MetadataInterface
     {
         return isset($this->parameters['classes'][$name]);
     }
-
 }

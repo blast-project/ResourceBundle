@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Blast Project package.
  *
@@ -8,10 +9,10 @@
  * For the full copyright and license information, please view the LICENSE.md
  * file that was distributed with this source code.
  */
+
 namespace Blast\Bundle\ResourceBundle\Doctrine\ORM\NamingStrategy;
 
 use Doctrine\ORM\Mapping\NamingStrategy;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use ReflectionClass;
 
 /**
@@ -19,21 +20,18 @@ use ReflectionClass;
  */
 class UnderscoredBundlePrefixStrategy implements NamingStrategy
 {
-
     /**
-     * @var integer
+     * @var int
      */
     private $case = CASE_LOWER;
 
     /**
-     *
-     * @var NamingStrategy 
+     * @var NamingStrategy
      */
     private $fallbackStrategy;
 
     /**
-     *
-     * @var array 
+     * @var array
      */
     private $namingMap = [];
 
@@ -55,9 +53,8 @@ class UnderscoredBundlePrefixStrategy implements NamingStrategy
      */
     public function classToTableName($className)
     {
-
         $prefix = $this->getTableNamePrefix($className);
-        if ( strpos($className, '\\') !== false ) {
+        if (strpos($className, '\\') !== false) {
             $className = substr($className, strrpos($className, '\\') + 1);
         }
 
@@ -104,6 +101,7 @@ class UnderscoredBundlePrefixStrategy implements NamingStrategy
         $propertyName = null)
     {
         $rc = new ReflectionClass($targetEntity);
+
         return $this->classToTableName($sourceEntity) . '__' . $this->underscore($rc->getShortName());
     }
 
@@ -117,17 +115,17 @@ class UnderscoredBundlePrefixStrategy implements NamingStrategy
     }
 
     /**
-     * 
      * @param array $enabledBundles
      * @param array $filter
+     *
      * @return array
      */
     private function buildNamingMap(array $enabledBundles, array $filter)
     {
         $namingMap = [];
 
-        foreach ( $enabledBundles as $bundleName => $bundleNamespace ) {
-            if ( count($filter) && !$this->matchFilter($bundleNamespace, $filter) ) {
+        foreach ($enabledBundles as $bundleName => $bundleNamespace) {
+            if (count($filter) && !$this->matchFilter($bundleNamespace, $filter)) {
                 continue;
             }
             $bundleNamespace = preg_replace("/$bundleName$/", '',
@@ -135,6 +133,7 @@ class UnderscoredBundlePrefixStrategy implements NamingStrategy
             $bundleName = preg_replace('/Bundle$/', '', $bundleName);
             $namingMap[$this->underscore($bundleName)] = $bundleNamespace;
         }
+
         return $namingMap;
     }
 
@@ -142,17 +141,18 @@ class UnderscoredBundlePrefixStrategy implements NamingStrategy
      * Get prefix for table from naming map.
      *
      * @param string $className
+     *
      * @return string
      */
     private function getTableNamePrefix($className)
     {
-
         $name = ltrim($className, '\\');
-        foreach ( $this->namingMap as $prefix => $namespace ) {
-            if ( strpos($name, $namespace) === 0 ) {
+        foreach ($this->namingMap as $prefix => $namespace) {
+            if (strpos($name, $namespace) === 0) {
                 return $prefix . '_';
             }
         }
+
         return '';
     }
 
@@ -165,7 +165,7 @@ class UnderscoredBundlePrefixStrategy implements NamingStrategy
     {
         $str = preg_replace('/(?<=[a-z])([A-Z])/', '_$1', $string);
 
-        if ( $this->case === CASE_UPPER ) {
+        if ($this->case === CASE_UPPER) {
             return strtoupper($str);
         }
 
@@ -174,11 +174,12 @@ class UnderscoredBundlePrefixStrategy implements NamingStrategy
 
     private function matchFilter(string $name, array $filter)
     {
-        foreach ( $filter as $regex ) {
-            if ( preg_match("/.*$regex.*/", $name) ) {
+        foreach ($filter as $regex) {
+            if (preg_match("/.*$regex.*/", $name)) {
                 return true;
             }
         }
+
         return false;
     }
 }

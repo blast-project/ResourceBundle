@@ -15,7 +15,6 @@ namespace Blast\Bundle\ResourceBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 
-
 trait ResourceConfigurationTrait
 {
     private function addResourcesSection(ArrayNodeDefinition $rootNode)
@@ -25,16 +24,16 @@ trait ResourceConfigurationTrait
                 ->arrayNode('resources')
                     ->addDefaultsIfNotSet()
                     ->children();
-        
+
         $this->addResourceDefinitions($resourceNode);
-        
-        $resourceNode 
+
+        $resourceNode
             ->end()
                 ->end()
                     ->end();
     }
-    
-     private function addResourceDefinition(NodeBuilder $node, string $resourceName, string $defaultClassName)
+
+    private function addResourceDefinition(NodeBuilder $node, string $resourceName, string $defaultClassName)
     {
         $node
             ->arrayNode($resourceName)
@@ -48,7 +47,7 @@ trait ResourceConfigurationTrait
                         ->end()
                     ->end()
                 ->end()
-            ->end()        
+            ->end()
         ;
     }
 }

@@ -18,7 +18,6 @@ use Blast\Bundle\ResourceBundle\DependencyInjection\Compiler\RegisterResourcesPa
 
 class BlastResourceBundle extends Bundle
 {
-
     /**
      * {@inheritdoc}
      */
@@ -26,5 +25,4 @@ class BlastResourceBundle extends Bundle
     {
         $container->addCompilerPass(new RegisterResourcesPass());
     }
-
 }

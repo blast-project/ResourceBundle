@@ -1,9 +1,15 @@
 <?php
+
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of the Blast Project package.
+ *
+ * Copyright (C) 2015-2017 Libre Informatique
+ *
+ * This file is licenced under the GNU LGPL v3.
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
+
 namespace Blast\Bundle\ResourceBundle\Sonata\Admin;
 
 use Blast\CoreBundle\Admin\CoreAdmin as BlastAdmin;
@@ -11,13 +17,12 @@ use Sonata\AdminBundle\Admin\AbstractAdmin as SonataAdmin;
 use Blast\Bundle\ResourceBundle\Repository\ResourceRepositoryInterface;
 
 /**
- * Description of ResourceAdmin
+ * Description of ResourceAdmin.
  *
  * @author glenn
  */
 class ResourceAdmin extends BlastAdmin
 {
-
     public function configure()
     {
         SonataAdmin::configure();
@@ -26,8 +31,7 @@ class ResourceAdmin extends BlastAdmin
     }
 
     /**
-     *
-     * @var ResourceRepositoryInterface 
+     * @var ResourceRepositoryInterface
      */
     protected $resourceRepository;
 
@@ -47,18 +51,18 @@ class ResourceAdmin extends BlastAdmin
     public function create($object)
     {
         $this->prePersist($object);
-        foreach ( $this->extensions as $extension ) {
+        foreach ($this->extensions as $extension) {
             $extension->prePersist($this, $object);
         }
 
         $result = $this->getResourceRepository()->add($object);
         // BC compatibility
-        if ( null !== $result ) {
+        if (null !== $result) {
             $object = $result;
         }
 
         $this->postPersist($object);
-        foreach ( $this->extensions as $extension ) {
+        foreach ($this->extensions as $extension) {
             $extension->postPersist($this, $object);
         }
 
@@ -73,7 +77,7 @@ class ResourceAdmin extends BlastAdmin
     public function getObject($id)
     {
         $object = $this->getResourceRepository()->get($id);
-        foreach ( $this->getExtensions() as $extension ) {
+        foreach ($this->getExtensions() as $extension) {
             $extension->alterObject($this, $object);
         }
 

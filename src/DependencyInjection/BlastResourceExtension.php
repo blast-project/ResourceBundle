@@ -17,14 +17,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Config\Loader\LoaderInterface;
 use Blast\Bundle\ResourceBundle\Metadata\Metadata;
 
-/**
- */
 class BlastResourceExtension extends Extension
 {
-
     public function load(array $configs, ContainerBuilder $container)
     {
         $config = $this->processConfiguration($this->getConfiguration([],
@@ -34,11 +30,11 @@ class BlastResourceExtension extends Extension
 
         $loader->load('services.yml');
 
-        if ( array_key_exists('resources', $config) ) {
+        if (array_key_exists('resources', $config)) {
             $this->loadResources($config['resources'], $container);
         }
 
-        if ( array_key_exists('underscored_bundle_prefix_strategy', $config) ) {
+        if (array_key_exists('underscored_bundle_prefix_strategy', $config)) {
             $this->configureUnderscoredBundlePrefixStrategy(
                     $config['underscored_bundle_prefix_strategy'], $container);
         }
@@ -48,7 +44,7 @@ class BlastResourceExtension extends Extension
     {
         $resources = $container->hasParameter('blast.resources') ? $container->getParameter('blast.resources') : [];
 
-        foreach ( $resources as $alias => $resourceParameters ) {
+        foreach ($resources as $alias => $resourceParameters) {
             $metadata = Metadata::fromAliasAndParameters($alias,
                             $resourceParameters);
             $resources = array_merge($resources, [$alias => $resourceParameters]);
@@ -66,5 +62,4 @@ class BlastResourceExtension extends Extension
         $args[1] = $config;
         $definition->setArguments($args);
     }
-
 }

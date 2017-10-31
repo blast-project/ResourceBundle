@@ -1,34 +1,35 @@
 <?php
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of the Blast Project package.
+ *
+ * Copyright (C) 2015-2017 Libre Informatique
+ *
+ * This file is licenced under the GNU LGPL v3.
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
 
 namespace Blast\Bundle\ResourceBundle\Sonata\Translator;
 
 use Sonata\AdminBundle\Translator\LabelTranslatorStrategyInterface;
-use Sonata\AdminBundle\Admin\AdminInterface;
 
 /**
  * @author glenn
  */
 class PrefixLabelTranslatorStrategy implements LabelTranslatorStrategyInterface
 {
-
     /**
-     *
-     * @var string 
+     * @var string
      */
     protected $prefix;
 
     public function getLabel($label, $context = '', $type = ''): string
     {
-
         $labelParts = explode('_', $label);
         $key = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', end($labelParts)));
         $translationKey = $this->prefix . '.' . $context . '.' . $type . '.' . $key;
+
         return $translationKey;
     }
 
@@ -36,5 +37,4 @@ class PrefixLabelTranslatorStrategy implements LabelTranslatorStrategyInterface
     {
         $this->prefix = $prefix;
     }
-
 }

@@ -1,9 +1,13 @@
 <?php
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of the Blast Project package.
+ *
+ * Copyright (C) 2015-2017 Libre Informatique
+ *
+ * This file is licenced under the GNU LGPL v3.
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
 
 namespace Blast\Bundle\ResourceBundle\Sonata\Controller;
@@ -11,13 +15,10 @@ namespace Blast\Bundle\ResourceBundle\Sonata\Controller;
 use Blast\CoreBundle\Controller\CRUDController as BlastCRUDController;
 
 /**
- * Description of CRUDController
+ * Description of CRUDController.
  *
  * @author glenn
  */
 class CRUDController extends BlastCRUDController
 {
-
-    
-
 }
