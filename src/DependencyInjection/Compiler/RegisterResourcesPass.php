@@ -1,9 +1,13 @@
 <?php
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of the Blast Project package.
+ *
+ * Copyright (C) 2015-2017 Libre Informatique
+ *
+ * This file is licenced under the GNU LGPL v3.
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
 
 namespace Blast\Bundle\ResourceBundle\DependencyInjection\Compiler;
@@ -13,24 +17,22 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use InvalidArgumentException;
 
 /**
- * Description of RegisterResourcesPass
+ * Description of RegisterResourcesPass.
  *
  * @author glenn
  */
 class RegisterResourcesPass implements CompilerPassInterface
 {
-
     public function process(ContainerBuilder $container)
     {
-
         try {
             $resources = $container->getParameter('blast.resources');
             $registry = $container->findDefinition('blast.resource.resource_registry');
-        } catch ( InvalidArgumentException $exception ) {
+        } catch (InvalidArgumentException $exception) {
             return;
         }
 
-        foreach ( $resources as $alias => $parameters ) {
+        foreach ($resources as $alias => $parameters) {
             $this->validateBlastResource($parameters['classes']['entity']);
             $registry->addMethodCall('addFromAliasAndParameters',
                     [$alias, $parameters]);
@@ -50,5 +52,4 @@ class RegisterResourcesPass implements CompilerPassInterface
           ));
           } */
     }
-
 }

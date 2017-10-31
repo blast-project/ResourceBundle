@@ -1,14 +1,17 @@
 <?php
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of the Blast Project package.
+ *
+ * Copyright (C) 2015-2017 Libre Informatique
+ *
+ * This file is licenced under the GNU LGPL v3.
+ * For the full copyright and license information, please view the LICENSE.md
+ * file that was distributed with this source code.
  */
 
 namespace Blast\Bundle\ResourceBundle\Command;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,13 +21,12 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 
 /**
- * Description of ListDoctrineTablesCommand
+ * Description of ListDoctrineTablesCommand.
  *
  * @author glenn
  */
 class ListDoctrineTablesCommand extends ContainerAwareCommand
 {
-
     protected function configure()
     {
         $this
@@ -50,33 +52,28 @@ class ListDoctrineTablesCommand extends ContainerAwareCommand
         $columns = $matches[2];
         $tables = [];
 
-        for ( $i = 0; $i < count($columns); $i++ ) {
+        for ($i = 0; $i < count($columns); ++$i) {
             $cols = explode(',', $columns[$i]);
 
-            $cols = array_map(function($c) {
+            $cols = array_map(function ($c) {
                 return (explode(' ', trim($c)))[0];
             }, $cols);
             $tables[$tableNames[$i]] = $cols;
         }
 
-
-
         asort($tables);
 
-
-
-        foreach ( $tables as $tableName => $cols ) {
-            if ( !preg_match('/.*' . $filter . '.*/', $tableName) ) {
+        foreach ($tables as $tableName => $cols) {
+            if (!preg_match('/.*' . $filter . '.*/', $tableName)) {
                 continue;
             }
             $table = new Table($output);
             $table->setHeaders([$tableName]);
 
-            foreach ( $cols as $colName ) {
+            foreach ($cols as $colName) {
                 $table->addRow([$colName]);
             }
             $table->render();
         }
     }
-
 }

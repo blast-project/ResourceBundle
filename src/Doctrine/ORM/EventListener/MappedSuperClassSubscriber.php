@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * This file is part of the Blast Project package.
  *
@@ -27,11 +28,10 @@ use Blast\Bundle\ResourceBundle\Metadata\MetadataRegistryInterface;
  */
 final class MappedSuperClassSubscriber implements EventSubscriber
 {
-
     /**
      * @var MetadataRegistryInterface
      */
-    protected $resourceRegistry;
+    private $resourceRegistry;
 
     /**
      * @var RuntimeReflectionService
@@ -58,12 +58,11 @@ final class MappedSuperClassSubscriber implements EventSubscriber
      */
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
-
         $metadata = $eventArgs->getClassMetadata();
         $this->convertToEntityIfNeeded($metadata,
                 $eventArgs->getEntityManager()->getConfiguration());
 
-        if ( !$metadata->isMappedSuperclass ) {
+        if (!$metadata->isMappedSuperclass) {
             $this->setAssociationMappings($metadata,
                     $eventArgs->getEntityManager()->getConfiguration());
         } else {
@@ -77,36 +76,36 @@ final class MappedSuperClassSubscriber implements EventSubscriber
     private function convertToEntityIfNeeded(ClassMetadataInfo $metadata,
             Configuration $configuration)
     {
-        if ( false === $metadata->isMappedSuperclass ) {
+        if (false === $metadata->isMappedSuperclass) {
             return;
         }
 
         try {
             $resourceMetadata = $this->resourceRegistry->getByClass($metadata->getName());
-        } catch ( \InvalidArgumentException $exception ) {
+        } catch (\InvalidArgumentException $exception) {
             return;
         }
 
-        if ( $metadata->getName() === $resourceMetadata->getClass('entity') ) {
+        if ($metadata->getName() === $resourceMetadata->getClass('entity')) {
             $metadata->isMappedSuperclass = false;
         }
     }
 
     /**
      * @param ClassMetadataInfo $metadata
-     * @param Configuration $configuration
+     * @param Configuration     $configuration
      */
     private function setAssociationMappings(ClassMetadataInfo $metadata,
             Configuration $configuration)
     {
         $class = $metadata->getName();
-        if ( !class_exists($class) ) {
+        if (!class_exists($class)) {
             return;
         }
-        foreach ( class_parents($class) as $parent ) {
-            if ( false === in_array($parent,
+        foreach (class_parents($class) as $parent) {
+            if (false === in_array($parent,
                             $configuration->getMetadataDriverImpl()->getAllClassNames(),
-                            true) ) {
+                            true)) {
                 continue;
             }
             $parentMetadata = new ClassMetadata(
@@ -117,12 +116,12 @@ final class MappedSuperClassSubscriber implements EventSubscriber
             // Load Metadata
             $configuration->getMetadataDriverImpl()->loadMetadataForClass($parent,
                     $parentMetadata);
-            if ( false === $this->isResource($parentMetadata) ) {
+            if (false === $this->isResource($parentMetadata)) {
                 continue;
             }
-            if ( $parentMetadata->isMappedSuperclass ) {
-                foreach ( $parentMetadata->getAssociationMappings() as $key => $value ) {
-                    if ( $this->isRelation($value['type']) && !isset($metadata->associationMappings[$key]) ) {
+            if ($parentMetadata->isMappedSuperclass) {
+                foreach ($parentMetadata->getAssociationMappings() as $key => $value) {
+                    if ($this->isRelation($value['type']) && !isset($metadata->associationMappings[$key])) {
                         $metadata->associationMappings[$key] = $value;
                     }
                 }
@@ -135,11 +134,11 @@ final class MappedSuperClassSubscriber implements EventSubscriber
      */
     private function unsetAssociationMappings(ClassMetadataInfo $metadata)
     {
-        if ( false === $this->isResource($metadata) ) {
+        if (false === $this->isResource($metadata)) {
             return;
         }
-        foreach ( $metadata->getAssociationMappings() as $key => $value ) {
-            if ( $this->isRelation($value['type']) ) {
+        foreach ($metadata->getAssociationMappings() as $key => $value) {
+            if ($this->isRelation($value['type'])) {
                 unset($metadata->associationMappings[$key]);
             }
         }
@@ -164,7 +163,7 @@ final class MappedSuperClassSubscriber implements EventSubscriber
 
     private function isResource(ClassMetadataInfo $metadata)
     {
-        if ( !$reflClass = $metadata->getReflectionClass() ) {
+        if (!$reflClass = $metadata->getReflectionClass()) {
             return false;
         }
 
@@ -173,10 +172,10 @@ final class MappedSuperClassSubscriber implements EventSubscriber
 
     private function getReflectionService()
     {
-        if ( $this->reflectionService === null ) {
+        if ($this->reflectionService === null) {
             $this->reflectionService = new RuntimeReflectionService();
         }
+
         return $this->reflectionService;
     }
-
 }
