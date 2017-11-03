@@ -15,7 +15,6 @@
         "blast",
         "symfony"
     ],
-    "version": "0.6.4",
     "homepage": "https://github.com/blast-project/ResourceBundle",
     "authors": [
         {
