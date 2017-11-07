@@ -28,7 +28,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Blast\\Bundle\\ResourceBundle\\": "/"
+            "Blast\\Bundle\\ResourceBundle\\": "."
         }
     }
 }

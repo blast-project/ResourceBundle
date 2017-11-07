@@ -12,7 +12,7 @@
 
 namespace Blast\Bundle\ResourceBundle\Sonata\Controller;
 
-use Blast\CoreBundle\Controller\CRUDController as BlastCRUDController;
+use Blast\Bundle\CoreBundle\Controller\CRUDController as BlastCRUDController;
 
 /**
  * Description of CRUDController.

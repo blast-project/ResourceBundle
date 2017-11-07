@@ -12,7 +12,7 @@
 
 namespace Blast\Bundle\ResourceBundle\Sonata\Admin;
 
-use Blast\CoreBundle\Admin\CoreAdmin as BlastAdmin;
+use Blast\Bundle\CoreBundle\Admin\CoreAdmin as BlastAdmin;
 use Sonata\AdminBundle\Admin\AbstractAdmin as SonataAdmin;
 use Blast\Bundle\ResourceBundle\Repository\ResourceRepositoryInterface;
 
