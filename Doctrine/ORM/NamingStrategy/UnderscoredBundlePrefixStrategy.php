@@ -53,6 +53,8 @@ class UnderscoredBundlePrefixStrategy implements NamingStrategy
      */
     public function classToTableName($className)
     {
+        // $rc = new ReflectionClass($className);
+        // dump($rc);die;
         $prefix = $this->getTableNamePrefix($className);
         if (strpos($className, '\\') !== false) {
             $className = substr($className, strrpos($className, '\\') + 1);
@@ -128,8 +130,7 @@ class UnderscoredBundlePrefixStrategy implements NamingStrategy
             if (count($filter) && !$this->matchFilter($bundleNamespace, $filter)) {
                 continue;
             }
-            $bundleNamespace = preg_replace("/$bundleName$/", '',
-                $bundleNamespace);
+            $bundleNamespace = preg_replace("/$bundleName$/", '', $bundleNamespace);
             $bundleName = preg_replace('/Bundle$/', '', $bundleName);
             $namingMap[$this->underscore($bundleName)] = $bundleNamespace;
         }
