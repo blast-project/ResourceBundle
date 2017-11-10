@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Blast Project package.
  *
@@ -8,6 +9,7 @@
  * For the full copyright and license information, please view the LICENSE.md
  * file that was distributed with this source code.
  */
+
 namespace Blast\Bundle\ResourceBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -26,7 +28,6 @@ use Symfony\Component\Console\Input\InputOption;
  */
 class ListDoctrineTablesCommand extends ContainerAwareCommand
 {
-
     protected function configure()
     {
         $this
@@ -55,7 +56,7 @@ class ListDoctrineTablesCommand extends ContainerAwareCommand
         $columns = $matches[2];
         $tables = [];
 
-        for ( $i = 0; $i < count($columns); ++$i ) {
+        for ($i = 0; $i < count($columns); ++$i) {
             $cols = explode(',', $columns[$i]);
 
             $cols = array_map(function ($c) {
@@ -66,19 +67,19 @@ class ListDoctrineTablesCommand extends ContainerAwareCommand
 
         asort($tables);
 
-        foreach ( $tables as $tableName => $cols ) {
-            if ( !preg_match('/.*' . $filter . '.*/', $tableName) ) {
+        foreach ($tables as $tableName => $cols) {
+            if (!preg_match('/.*' . $filter . '.*/', $tableName)) {
                 continue;
             }
             $table = new Table($output);
             $table->setHeaders([$tableName]);
-            
-            if ( false === $namesOnly ) {
-                foreach ( $cols as $colName ) {
+
+            if (false === $namesOnly) {
+                foreach ($cols as $colName) {
                     $table->addRow([$colName]);
                 }
             }
-            
+
             $table->render();
         }
     }

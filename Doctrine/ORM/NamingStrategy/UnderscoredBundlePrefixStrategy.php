@@ -53,7 +53,6 @@ class UnderscoredBundlePrefixStrategy implements NamingStrategy
      */
     public function classToTableName($className)
     {
-
         $prefix = $this->getTableNamePrefix($className);
         if (strpos($className, '\\') !== false) {
             $className = substr($className, strrpos($className, '\\') + 1);
