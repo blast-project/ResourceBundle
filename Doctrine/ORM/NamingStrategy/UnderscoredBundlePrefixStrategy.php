@@ -71,8 +71,7 @@ class UnderscoredBundlePrefixStrategy implements NamingStrategy
     /**
      * {@inheritdoc}
      */
-    public function embeddedFieldToColumnName($propertyName,
-        $embeddedColumnName, $className = null, $embeddedClassName = null)
+    public function embeddedFieldToColumnName($propertyName, $embeddedColumnName, $className = null, $embeddedClassName = null)
     {
         return $this->underscore($propertyName) . '_' . $embeddedColumnName;
     }
@@ -96,8 +95,7 @@ class UnderscoredBundlePrefixStrategy implements NamingStrategy
     /**
      * {@inheritdoc}
      */
-    public function joinTableName($sourceEntity, $targetEntity,
-        $propertyName = null)
+    public function joinTableName($sourceEntity, $targetEntity, $propertyName = null)
     {
         $rc = new ReflectionClass($targetEntity);
 
