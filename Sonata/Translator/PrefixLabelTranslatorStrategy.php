@@ -25,8 +25,9 @@ class PrefixLabelTranslatorStrategy implements LabelTranslatorStrategyInterface
 
     public function getLabel($label, $context = '', $type = ''): string
     {
-        $labelParts = explode('_', $label);
-        $key = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', end($labelParts)));
+        $this->handleLabelForContext($label, $context);
+
+        $key = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $label));
         $translationKey = $this->prefix . '.' . $context . '.' . $type . '.' . $key;
 
         return $translationKey;
@@ -35,5 +36,15 @@ class PrefixLabelTranslatorStrategy implements LabelTranslatorStrategyInterface
     public function setPrefix(string $prefix)
     {
         $this->prefix = $prefix;
+    }
+
+    private function handleLabelForContext(&$label, $context)
+    {
+        // Stripping first label elements to get only « list » or « create » label under breadcrumb labels.
+        // Also acts as a underscore ltrim for label like « _actions » or « _options »
+        if ($context === 'breadcrumb' || strpos($label, '_') === 0) {
+            $label = explode('_', $label);
+            $label = end($label);
+        }
     }
 }
