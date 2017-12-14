@@ -4,10 +4,10 @@
     "description": "",
     "require": {
         "php": "^7.1",
-        "symfony/symfony": "^3.3"
+        "symfony/symfony": "3.3.*"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^3.3",
+        "symfony/phpunit-bridge": "3.3.*",
         "phpunit/phpunit": "^6.4"
     },
     "license": "LGPL-3.0",
@@ -31,5 +31,8 @@
             "Blast\\Bundle\\ResourceBundle\\": "."
         }
     },
-    "version": "dev-wip-platform"
+    "version": "dev-wip-platform",
+    "config": {
+        "bin-dir": "bin/"
+    }
 }
