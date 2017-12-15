@@ -1,7 +1,6 @@
 <?php
 
 /*
- *
  * Copyright (C) 2015-2017 Libre Informatique
  *
  * This file is licenced under the GNU LGPL v3.
@@ -55,7 +54,7 @@ class ListDoctrineTablesCommand extends ContainerAwareCommand
         $columns = $matches[2];
         $tables = [];
 
-        for ($i = 0; $i < count($columns); ++$i) {
+        for ($i = 0; $i < count($columns); $i++) {
             $cols = explode(',', $columns[$i]);
 
             $cols = array_map(function ($c) {
