@@ -36,7 +36,7 @@ You can now declare your resource as follows:
     # blast/resource.yml
 
     blast_resource:
-        resource:
+        resources:
             contact: #the resource alias
                 classes:
                     model: AcmeBundle\Entity\Contact
