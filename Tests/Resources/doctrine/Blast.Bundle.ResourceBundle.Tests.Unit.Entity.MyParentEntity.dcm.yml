@@ -1,0 +1,6 @@
+Blast\Bundle\ResourceBundle\Tests\Unit\Entity\MyParentEntity:
+    type: mappedSuperclass
+    table: blast_my_parent_entity
+    fields:
+        foo:
+            type: string(64)

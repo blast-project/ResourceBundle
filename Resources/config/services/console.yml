@@ -1,0 +1,7 @@
+services:
+  blast.console.command.resource_info:
+    class: Blast\Bundle\ResourceBundle\Console\Command\ResourceInfoCommand
+    arguments:
+      - "@blast.resource_registry"
+    tags:
+      - {name: "console.command"}

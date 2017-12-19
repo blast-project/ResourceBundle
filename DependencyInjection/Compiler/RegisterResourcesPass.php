@@ -10,14 +10,19 @@
 
 namespace Blast\Bundle\ResourceBundle\DependencyInjection\Compiler;
 
+use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use InvalidArgumentException;
+use Blast\Component\Resource\Metadata\Metadata;
+use Blast\Component\Resource\Metadata\MetadataInterface;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
+use Blast\Component\Resource\Metadata\ClassMap;
+use Blast\Bundle\ResourceBundle\Doctrine\ORM\Repository\ResourceRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
- * Description of RegisterResourcesPass.
- *
- * @author glenn
+ * @author Glenn Cavarlé <glenn.cavarle@libre-informatique.fr>
  */
 class RegisterResourcesPass implements CompilerPassInterface
 {
@@ -25,29 +30,96 @@ class RegisterResourcesPass implements CompilerPassInterface
     {
         try {
             $resources = $container->getParameter('blast.resources');
-            $registry = $container->findDefinition('blast.resource.resource_registry');
+            $registry = $container->findDefinition('blast.resource_registry');
         } catch (InvalidArgumentException $exception) {
             return;
         }
 
         foreach ($resources as $alias => $parameters) {
-            $this->validateBlastResource($parameters['classes']['entity']);
-            $registry->addMethodCall('addFromAliasAndParameters',
-                    [$alias, $parameters]);
+            $metadata = new Metadata($alias, ClassMap::fromArray($parameters['classes']));
+            //object arguments cannot be passed to "addMethodCall"
+            $registry->addMethodCall('addFromAliasAndParameters', [$alias, $parameters]);
+
+            $this->declareModelParameter($container, $metadata);
+            $this->declareRepositoryParameter($container, $metadata);
+            $this->declareRepositoryService($container, $metadata);
         }
     }
 
     /**
-     * @param string $class
+     * @param ContainerBuilder  $container
+     * @param MetadataInterface $metadata
      */
-    private function validateBlastResource(string $class)
+    protected function declareModelParameter(ContainerBuilder $container, MetadataInterface $metadata)
     {
-        /* if (!in_array(ResourceInterface::class, class_implements($class), true)) {
-          throw new InvalidArgumentException(sprintf(
-          'Class "%s" must implement "%s" to be registered as a Sylius resource.',
-          $class,
-          ResourceInterface::class
-          ));
-          } */
+        $classMap = $metadata->getClassMap();
+
+        if (!class_exists($classMap->getModel())) {
+            throw new \InvalidArgumentException(sprintf(
+                    'Resource "%s" declare a non-existent model class.', $metadata->getAlias()
+                ));
+        }
+        $modelAlias = sprintf('sil.model.%s', $metadata->getAlias());
+        $container->setParameter($modelAlias . '.class', $classMap->getModel());
+    }
+
+    /**
+     * @param ContainerBuilder  $container
+     * @param MetadataInterface $metadata
+     */
+    protected function declareRepositoryParameter(ContainerBuilder $container, MetadataInterface $metadata)
+    {
+        $classMap = $metadata->getClassMap();
+        $repositoryClass = ResourceRepository::class;
+        $repositoryAlias = sprintf('sil.repository.%s', $metadata->getAlias());
+
+        if ($classMap->hasRepository()) {
+            $repositoryClass = $classMap->getRepository();
+        }
+
+        if (!class_exists($repositoryClass)) {
+            throw new \InvalidArgumentException(sprintf(
+                    'Resource "%s" declare a non-existent repository class.',
+                    $metadata->getAlias()
+                ));
+        }
+
+        $container->setParameter($repositoryAlias . '.class', $repositoryClass);
+    }
+
+    /**
+     * @param ContainerBuilder  $container
+     * @param MetadataInterface $metadata
+     */
+    protected function declareRepositoryService(ContainerBuilder $container, MetadataInterface $metadata)
+    {
+        $repositoryAlias = sprintf('sil.repository.%s', $metadata->getAlias());
+        $repositoryParameter = sprintf('%s.class', $repositoryAlias);
+        $repositoryClass = ResourceRepository::class;
+
+        if ($container->hasParameter($repositoryParameter)) {
+            $repositoryClass = $container->getParameter($repositoryParameter);
+        }
+
+        $definition = new Definition($repositoryClass);
+        $definition->setArguments([
+          new Reference('doctrine.orm.entity_manager'),
+          $this->getClassMetadataDefinition($metadata),
+        ]);
+        $container->setDefinition($repositoryAlias, $definition);
+    }
+
+    /**
+     * @param MetadataInterface $metadata
+     */
+    protected function getClassMetadataDefinition(MetadataInterface $metadata): Definition
+    {
+        $definition = new Definition(ClassMetadata::class);
+        $definition
+          ->setFactory([new Reference('doctrine.orm.entity_manager'), 'getClassMetadata'])
+          ->setArguments([$metadata->getClassMap()->getModel()])
+          ->setPublic(false);
+
+        return $definition;
     }
 }

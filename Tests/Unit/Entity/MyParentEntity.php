@@ -1,6 +1,7 @@
 <?php
 
 /*
+ *
  * Copyright (C) 2015-2017 Libre Informatique
  *
  * This file is licenced under the GNU LGPL v3.
@@ -8,14 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Blast\Bundle\ResourceBundle\Repository;
+namespace Blast\Bundle\ResourceBundle\Tests\Unit\Entity;
 
-/**
- * @author glenn
- */
-interface ResourceRepositoryInterface
+use Blast\Component\Resource\Model\ResourceInterface;
+
+class MyParentEntity implements ResourceInterface
 {
-    public function add($resource): void;
-
-    public function remove($resource): void;
+    protected $foo;
 }

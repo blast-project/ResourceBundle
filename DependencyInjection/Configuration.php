@@ -13,11 +13,6 @@ namespace Blast\Bundle\ResourceBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * This is the class that validates and merges configuration from your app/config files.
- *
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
- */
 class Configuration implements ConfigurationInterface
 {
     /**
@@ -28,18 +23,22 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('blast_resource');
         $rootNode
-                ->children()
-                    ->arrayNode('resources')->end()
-                    ->arrayNode('underscored_bundle_prefix_strategy')->children()
-                        ->scalarNode('fallback')
-                            ->defaultValue('doctrine.orm.naming_strategy.underscore')
-                        ->end()
-                        ->arrayNode('filter')
-                            ->prototype('scalar')->end()
-                        ->end()
+          ->children()
+            ->arrayNode('resources')
+                ->useAttributeAsKey('name')
+                ->prototype('array')
+                  ->children()
+                    ->arrayNode('classes')
+                      ->isRequired()
+                      ->addDefaultsIfNotSet()
+                      ->children()
+                        ->scalarNode('model')->isRequired()->cannotBeEmpty()->end()
+                        ->scalarNode('repository')->cannotBeEmpty()->end()
                     ->end()
+                  ->end()
                 ->end()
-        ;
+            ->end()
+         ->end();
 
         return $treeBuilder;
     }

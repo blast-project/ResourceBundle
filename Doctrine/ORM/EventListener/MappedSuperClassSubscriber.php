@@ -18,8 +18,10 @@ use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\Common\Persistence\Mapping\ReflectionService;
 use Doctrine\Common\Persistence\Mapping\RuntimeReflectionService;
-use Blast\Bundle\ResourceBundle\Metadata\MetadataRegistryInterface;
+use Blast\Component\Resource\Metadata\MetadataRegistryInterface;
+use Blast\Component\Resource\Model\ResourceInterface;
 
 /**
  * @author Glenn Cavarlé <glenn.cavarle@libre-informatique.fr>
@@ -57,12 +59,17 @@ final class MappedSuperClassSubscriber implements EventSubscriber
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
         $metadata = $eventArgs->getClassMetadata();
-        $this->convertToEntityIfNeeded($metadata,
-                $eventArgs->getEntityManager()->getConfiguration());
+        $configuration = $eventArgs->getEntityManager()->getConfiguration();
+
+        $this->processMetadata($metadata, $configuration);
+    }
+
+    public function processMetadata(ClassMetadataInfo $metadata, Configuration $configuration)
+    {
+        $this->convertToEntityIfNeeded($metadata, $configuration);
 
         if (!$metadata->isMappedSuperclass) {
-            $this->setAssociationMappings($metadata,
-                    $eventArgs->getEntityManager()->getConfiguration());
+            $this->setAssociationMappings($metadata, $configuration);
         } else {
             $this->unsetAssociationMappings($metadata);
         }
@@ -71,20 +78,13 @@ final class MappedSuperClassSubscriber implements EventSubscriber
     /**
      * @param ClassMetadataInfo $metadata
      */
-    private function convertToEntityIfNeeded(ClassMetadataInfo $metadata,
-            Configuration $configuration)
+    private function convertToEntityIfNeeded(ClassMetadataInfo $metadata, Configuration $configuration)
     {
         if (false === $metadata->isMappedSuperclass) {
             return;
         }
-
-        try {
-            $resourceMetadata = $this->resourceRegistry->getByClass($metadata->getName());
-        } catch (\InvalidArgumentException $exception) {
-            return;
-        }
-
-        if ($metadata->getName() === $resourceMetadata->getClass('entity')) {
+        //if resource is declared, make it an entity
+        if (null !== $this->resourceRegistry->findByModelClass($metadata->getName())) {
             $metadata->isMappedSuperclass = false;
         }
     }
@@ -93,30 +93,33 @@ final class MappedSuperClassSubscriber implements EventSubscriber
      * @param ClassMetadataInfo $metadata
      * @param Configuration     $configuration
      */
-    private function setAssociationMappings(ClassMetadataInfo $metadata,
-            Configuration $configuration)
+    private function setAssociationMappings(ClassMetadataInfo $metadata, Configuration $configuration)
     {
-        $class = $metadata->getName();
-        if (!class_exists($class)) {
+        $className = $metadata->getName();
+
+        if (!class_exists($className)) {
             return;
         }
-        foreach (class_parents($class) as $parent) {
-            if (false === in_array($parent,
-                            $configuration->getMetadataDriverImpl()->getAllClassNames(),
-                            true)) {
+
+        foreach (class_parents($className) as $parent) {
+            $allClassNames = $configuration->getMetadataDriverImpl()->getAllClassNames();
+
+            //$parent must be managed by doctrine
+            if (false === in_array($parent, $allClassNames, true)) {
                 continue;
             }
-            $parentMetadata = new ClassMetadata(
-                    $parent, $configuration->getNamingStrategy()
-            );
-            // Wakeup Reflection
+
+            //load parent metadata
+            $parentMetadata = new ClassMetadata($parent, $configuration->getNamingStrategy());
             $parentMetadata->wakeupReflection($this->getReflectionService());
-            // Load Metadata
-            $configuration->getMetadataDriverImpl()->loadMetadataForClass($parent,
-                    $parentMetadata);
+            $configuration->getMetadataDriverImpl()->loadMetadataForClass($parent, $parentMetadata);
+
+            //$parentMetadata must be declared as resource
             if (false === $this->isResource($parentMetadata)) {
                 continue;
             }
+
+            //apply $parentMetadata associations in current $metadata
             if ($parentMetadata->isMappedSuperclass) {
                 foreach ($parentMetadata->getAssociationMappings() as $key => $value) {
                     if ($this->isRelation($value['type']) && !isset($metadata->associationMappings[$key])) {
@@ -159,18 +162,27 @@ final class MappedSuperClassSubscriber implements EventSubscriber
         );
     }
 
-    private function isResource(ClassMetadataInfo $metadata)
+    /**
+     * @param ClassMetadataInfo $metadata
+     *
+     * @return bool
+     */
+    private function isResource(ClassMetadataInfo $metadata): bool
     {
-        if (!$reflClass = $metadata->getReflectionClass()) {
+        $reflClass = $metadata->getReflectionClass();
+        if (!$reflClass) {
             return false;
         }
 
-        return true;
+        return $reflClass->implementsInterface(ResourceInterface::class);
     }
 
-    private function getReflectionService()
+    /**
+     * @return ReflectionService [description]
+     */
+    private function getReflectionService(): ReflectionService
     {
-        if ($this->reflectionService === null) {
+        if (null === $this->reflectionService) {
             $this->reflectionService = new RuntimeReflectionService();
         }
 

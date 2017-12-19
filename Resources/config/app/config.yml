@@ -1,8 +1,5 @@
 blast_resource:
     resources: ~
-    underscored_bundle_prefix_strategy:
-        fallback: doctrine.orm.naming_strategy.underscore
-        filter: ['Sil', 'Blast', 'Platform', 'App']
 
 # doctrine:
 #     orm:

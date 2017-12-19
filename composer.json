@@ -4,7 +4,8 @@
     "description": "",
     "require": {
         "php": "^7.1",
-        "symfony/symfony": "3.3.*"
+        "symfony/symfony": "^3.3",
+        "blast-project/resource": "self.version"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "3.3.*",
@@ -16,8 +17,7 @@
         "symfony"
     ],
     "homepage": "https://github.com/blast-project/ResourceBundle",
-    "authors": [
-        {
+    "authors": [{
             "name": "Glenn CAVARLÉ",
             "email": "glenn.cavarle@libre-informatique.fr"
         },

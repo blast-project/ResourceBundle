@@ -10,8 +10,8 @@
 
 namespace Blast\Bundle\ResourceBundle\Doctrine\ORM\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Blast\Component\Resource\Repository\ResourceRepositoryInterface;
+use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use InvalidArgumentException;
 
 /**
@@ -19,7 +19,7 @@ use InvalidArgumentException;
  *
  * @author glenn
  */
-class ResourceRepository extends EntityRepository implements ResourceRepositoryInterface
+class NestedTreeResourceRepository extends NestedTreeRepository implements ResourceRepositoryInterface
 {
     public function get($id)
     {

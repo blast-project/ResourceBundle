@@ -1,0 +1,6 @@
+Blast\Bundle\ResourceBundle\Tests\Unit\Entity\MyEntity:
+    type: mappedSuperclass
+    table: blast_my_entity
+    fields:
+        code:
+            type: string(64)
