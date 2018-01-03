@@ -5,3 +5,8 @@ services:
       - "@blast.resource_registry"
     tags:
       - {name: "console.command"}
+
+  blast.console.command.list_doctrine_tables:
+    class: Blast\Bundle\ResourceBundle\Console\Command\ListDoctrineTablesCommand
+    tags:
+      - {name: "console.command"}
