@@ -17,7 +17,6 @@ use Blast\Component\Resource\Metadata\Metadata;
 use Blast\Component\Resource\Metadata\MetadataInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use Blast\Component\Resource\Metadata\ClassMap;
 use Blast\Bundle\ResourceBundle\Doctrine\ORM\Repository\ResourceRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
@@ -31,60 +30,23 @@ class RegisterResourcesPass implements CompilerPassInterface
         try {
             $resources = $container->getParameter('blast.resources');
             $registry = $container->findDefinition('blast.resource_registry');
+            $targetEntityResolver = $container->findDefinition('doctrine.orm.listeners.resolve_target_entity');
         } catch (InvalidArgumentException $exception) {
             return;
         }
 
         foreach ($resources as $alias => $parameters) {
-            $metadata = new Metadata($alias, ClassMap::fromArray($parameters['classes']));
+            $metadata = Metadata::createFromAliasAndParameters($alias, $parameters);
             //object arguments cannot be passed to "addMethodCall"
             $registry->addMethodCall('addFromAliasAndParameters', [$alias, $parameters]);
 
-            $this->declareModelParameter($container, $metadata);
-            $this->declareRepositoryParameter($container, $metadata);
             $this->declareRepositoryService($container, $metadata);
+            $this->resolveTargetEntities($targetEntityResolver, $container, $metadata);
+
+            if (!$targetEntityResolver->hasTag('doctrine.event_listener')) {
+                $targetEntityResolver->addTag('doctrine.event_listener', ['event' => 'loadClassMetadata']);
+            }
         }
-    }
-
-    /**
-     * @param ContainerBuilder  $container
-     * @param MetadataInterface $metadata
-     */
-    protected function declareModelParameter(ContainerBuilder $container, MetadataInterface $metadata)
-    {
-        $classMap = $metadata->getClassMap();
-
-        if (!class_exists($classMap->getModel())) {
-            throw new \InvalidArgumentException(sprintf(
-                    'Resource "%s" declare a non-existent model class.', $metadata->getAlias()
-                ));
-        }
-        $modelAlias = sprintf('sil.model.%s', $metadata->getAlias());
-        $container->setParameter($modelAlias . '.class', $classMap->getModel());
-    }
-
-    /**
-     * @param ContainerBuilder  $container
-     * @param MetadataInterface $metadata
-     */
-    protected function declareRepositoryParameter(ContainerBuilder $container, MetadataInterface $metadata)
-    {
-        $classMap = $metadata->getClassMap();
-        $repositoryClass = ResourceRepository::class;
-        $repositoryAlias = sprintf('sil.repository.%s', $metadata->getAlias());
-
-        if ($classMap->hasRepository()) {
-            $repositoryClass = $classMap->getRepository();
-        }
-
-        if (!class_exists($repositoryClass)) {
-            throw new \InvalidArgumentException(sprintf(
-                    'Resource "%s" declare a non-existent repository class.',
-                    $metadata->getAlias()
-                ));
-        }
-
-        $container->setParameter($repositoryAlias . '.class', $repositoryClass);
     }
 
     /**
@@ -93,7 +55,7 @@ class RegisterResourcesPass implements CompilerPassInterface
      */
     protected function declareRepositoryService(ContainerBuilder $container, MetadataInterface $metadata)
     {
-        $repositoryAlias = sprintf('sil.repository.%s', $metadata->getAlias());
+        $repositoryAlias = sprintf('%s.repository.%s', $metadata->getPrefix(), $metadata->getAlias());
         $repositoryParameter = sprintf('%s.class', $repositoryAlias);
         $repositoryClass = ResourceRepository::class;
 
@@ -107,6 +69,24 @@ class RegisterResourcesPass implements CompilerPassInterface
           $this->getClassMetadataDefinition($metadata),
         ]);
         $container->setDefinition($repositoryAlias, $definition);
+    }
+
+    /**
+     * @param Definition        $targetEntityResolver
+     * @param ContainerBuilder  $container
+     * @param MetadataInterface $metadata
+     */
+    protected function resolveTargetEntities(Definition $targetEntityResolver, ContainerBuilder $container, MetadataInterface $metadata)
+    {
+        $classMap = $metadata->getClassMap();
+        $modelClass = $classMap->getModel();
+        $interfaces = $classMap->getInterfaces();
+
+        foreach ($interfaces as $interface) {
+            $targetEntityResolver->addMethodCall('addResolveTargetEntity', [
+                $interface, $modelClass, [],
+            ]);
+        }
     }
 
     /**

@@ -68,9 +68,9 @@ class ResourceInfoCommand extends ContainerAwareCommand
         $resources = $this->getMetadataRegistry()->getAll();
         ksort($resources);
         $table = new Table($output);
-        $table->setHeaders(['Alias']);
+        $table->setHeaders(['Prefix', 'Alias']);
         foreach ($resources as $resource) {
-            $table->addRow([$resource->getAlias()]);
+            $table->addRow([$resource->getPrefix(), $resource->getAlias()]);
         }
         $table->render();
     }
@@ -84,8 +84,10 @@ class ResourceInfoCommand extends ContainerAwareCommand
         $table = new Table($output);
         $table->setHeaders(['Alias', $metadata->getAlias()]);
         $information = [
-            'model'        => $metadata->getClassMap()->getModel(),
-            'repository'   => $metadata->getClassMap()->getRepository(),
+            'prefix'         => $metadata->getPrefix(),
+            'model'          => $metadata->getClassMap()->getModel(),
+            'repository'     => $metadata->getClassMap()->getRepository(),
+            'interfaces'     => implode("\n", $metadata->getClassMap()->getInterfaces()),
         ];
 
         foreach ($information as $key => $value) {

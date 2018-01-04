@@ -63,7 +63,7 @@ class ListDoctrineTablesCommand extends ContainerAwareCommand
             $tables[$tableNames[$i]] = $cols;
         }
 
-        asort($tables);
+        ksort($tables);
 
         foreach ($tables as $tableName => $cols) {
             if (!preg_match('/.*' . $filter . '.*/', $tableName)) {

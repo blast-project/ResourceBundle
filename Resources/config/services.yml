@@ -14,13 +14,13 @@ services:
         class: Blast\Bundle\ResourceBundle\Doctrine\ORM\EventListener\MappedSuperClassSubscriber
         arguments: ['@blast.resource_registry']
         tags:
-            - { name: doctrine.event_subscriber, priority: 1000}
+            - { name: doctrine.event_subscriber, priority: 9000}
 
     blast.resource.doctrine.orm.listener.repository:
         class: Blast\Bundle\ResourceBundle\Doctrine\ORM\EventListener\RepositorySubscriber
         arguments: ['@blast.resource_registry']
         tags:
-            - { name: doctrine.event_subscriber, priority: 1000}
+            - { name: doctrine.event_subscriber, priority: 9000}
 
     blast.resource.sonata.label_strategy.prefix:
         class: Blast\Bundle\ResourceBundle\Sonata\Translator\PrefixLabelTranslatorStrategy

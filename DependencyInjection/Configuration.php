@@ -34,8 +34,10 @@ class Configuration implements ConfigurationInterface
                       ->children()
                         ->scalarNode('model')->isRequired()->cannotBeEmpty()->end()
                         ->scalarNode('repository')->cannotBeEmpty()->end()
-                    ->end()
-                  ->end()
+                        ->arrayNode('interfaces')->scalarPrototype()->end()
+                      ->end()
+                   ->end()
+
                 ->end()
             ->end()
          ->end();
