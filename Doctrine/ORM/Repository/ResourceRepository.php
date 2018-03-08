@@ -43,6 +43,14 @@ class ResourceRepository extends EntityRepository implements ResourceRepositoryI
     /**
      * {@inheritdoc}
      */
+    public function update($resource): void
+    {
+        $this->_em->flush($resource);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function remove($resource): void
     {
         if (null !== $this->find($resource->getId())) {
