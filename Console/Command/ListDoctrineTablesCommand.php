@@ -31,15 +31,14 @@ class ListDoctrineTablesCommand extends ContainerAwareCommand
         $this
             ->setName('blast:doctrine:list-tables')
             ->setDescription('List doctrine tables')
-            ->addOption('names-only', null, InputOption::VALUE_NONE, 'show table names only')
-            ->addArgument('preg_filter', InputArgument::OPTIONAL,
-                'table name filter used by preg_match', '.*');
+            ->addOption('names-only', null, InputOption::VALUE_OPTIONAL, 'show table names only', false)
+            ->addArgument('preg_filter', InputArgument::OPTIONAL, 'table name filter used by preg_match', '.*');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $filter = $input->getArgument('preg_filter');
-        $namesOnly = $input->hasOption('names-only');
+        $namesOnly = $input->getOption('names-only');
 
         $command = $this->getApplication()->find('doctrine:schema:create');
         $arguments = array('--dump-sql' => true);
